@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encuesta de Biología</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #e8f5e9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #4caf50;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #388e3c;
+    }
+    .question, .result {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    .options button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("sw.js")
+      .then(registration => {
+            console.log('Service Worker registrado con éxito:', registration);
+        })
+        .catch(error => {
+            console.error('Error al registrar el Service Worker:', error);
+        });
+}
+  </script>
+</head>
+<body>
+  <header>Encuesta de Biología</header>
+  <div class="container" id="menu">
+    <h1>¡Bienvenido!</h1>
+    <p>¿Listo para comenzar?</p>
+    <button onclick="startQuiz()">Comenzar</button>
+  </div>
+  <div class="container hidden" id="quiz">
+    <div class="question" id="question">¿Pregunta de ejemplo?</div>
+    <div class="options" id="options">
+      <!-- Opciones generadas dinámicamente -->
+    </div>
+    <p id="result" class="hidden"></p>
+  </div>
+  <script>
+    // Preguntas y respuestas
+    const questions = [
+      {
+        question: "¿Que teoria de la vida sugiere que la vida fue creada por un ser divino?",
+        answers: [
+          { text: "Creacionismo", correct: true },
+          { text: "Panspermia", correct: false },
+          { text: "Litopanspermia", correct: false },
+          { text: "Radiopanspermia", correct: false }
+        ]
+      },
+      {
+        question: "¿Que es la biologia?",
+        answers: [
+          { text: "Es la ciencia que estudia a los minerales", correct: false },
+          { text: "Es la ciencia que estudia a los seres vivos", correct: true },
+          { text: "Es el estudio de los fenomenos climaticos", correct: false },
+          { text: "Es la ciencia que estudia a los atros", correct: false }
+        ]
+      },
+      {
+        question: "¿Que postula la hipotesis de la panspermia?",
+        answers: [
+          { text: "Que la vida fue creada por un ser divino", correct: false },
+          { text: "Que la vida surge espontaneamente de materia inerte", correct: false },
+          { text: "Que la vida se origino en el espacio", correct: true },
+          { text: "Que los microorganismos se desarrollaron en la Tierra hace millones de años", correct: false },
+        ]
+      },
+      {
+        question: "¿Que propone la hipotesis de la panspermia dirigida?",
+        answers: [
+          { text: "Que la vida viaja en fragmentos de roca", correct: false },
+          { text: "Que la vida fue sembrada por una civilizacion extraterrestre avanzada", correct: true },
+          { text: "Que la vida surgio por la radiacion estelar", correct: false },
+          { text: "Que la vida se genero de manera espontanea en la Tierra", correct: false },
+      ]
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function startQuiz() {
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("quiz").classList.remove("hidden");
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const questionElement = document.getElementById("question");
+      const optionsElement = document.getElementById("options");
+
+      // Obtener la pregunta actual
+      const currentQuestion = questions[currentQuestionIndex];
+      questionElement.textContent = currentQuestion.question;
+
+      // Limpiar opciones anteriores
+      optionsElement.innerHTML = "";
+
+      // Crear botones para cada opción
+      currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.textContent = answer.text;
+        button.onclick = () => checkAnswer(answer.correct);
+        optionsElement.appendChild(button);
+      });
+    }
+
+    function checkAnswer(isCorrect) {
+      if (isCorrect) {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          loadQuestion();
+        } else {
+          showResult("¡Felicidades! Has completado la encuesta.");
+        }
+      } else {
+        showResult("Respuesta incorrecta. Volviendo al inicio...");
+        setTimeout(resetQuiz, 2000); // Reinicia después de 2 segundos
+      }
+    }
+
+    function showResult(message) {
+      const resultElement = document.getElementById("result");
+      resultElement.textContent = message;
+      resultElement.classList.remove("hidden");
+      document.getElementById("options").innerHTML = ""; // Ocultar opciones
+    }
+
+    function resetQuiz() {
+      currentQuestionIndex = 0;
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("menu").classList.remove("hidden");
+      document.getElementById("quiz").classList.add("hidden");
+    }
+  </script>
+</body>
+</html><ALOASK-SEPARATE-EDITORS><ALOASK-SEPARATE-EDITORS>
